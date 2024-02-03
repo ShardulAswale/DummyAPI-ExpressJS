@@ -17,7 +17,20 @@ const swaggerOptions = {
         name: "Amazing Developer",
       },
       servers: ["http://localhost:5000"],
-    },
+    },tags: [
+      {
+        name: "Todos",
+        description: "Operations related to todos",
+      },
+      {
+        name: "Customers",
+        description: "Operations related to customers",
+      },
+      {
+        name: "Users",
+        description: "Operations related to users",
+      },
+    ],
   },
   // ['.routes/*.js']
   apis: ["./routes/*.js"],

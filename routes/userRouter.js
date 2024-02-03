@@ -6,16 +6,17 @@ const users = new Users();
 /**
  * @swagger
  * tags:
- *   name: User
- *   description: User endpoints
+ *   name: Users
+ *   description: Operations related to users
  */
 
 /**
  * @swagger
- * /:
+ * /users:
  *   get:
  *     summary: User Welcome Page
  *     description: Returns a welcome message.
+ *     tags: [Users]
  *     responses:
  *       200:
  *         description: Success
@@ -29,10 +30,11 @@ router.get("/", (req, res) => {
 
 /**
  * @swagger
- * /user:
+ * /users/user:
  *   post:
  *     summary: Add a new user
  *     description: Adds a new user to the system.
+ *     tags: [Users]
  *     requestBody:
  *       required: true
  *       content:
@@ -62,10 +64,11 @@ router.post("/user", async (req, res) => {
 
 /**
  * @swagger
- * /user:
+ * /users/user:
  *   get:
  *     summary: Get all users
  *     description: Retrieves a list of all users.
+ *     tags: [Users]
  *     responses:
  *       200:
  *         description: Users Found
@@ -89,10 +92,11 @@ router.get("/user", async (req, res) => {
 
 /**
  * @swagger
- * /user/id:
+ * /users/user/id:
  *   get:
  *     summary: Get user by ID
  *     description: Retrieves a user by ID using query parameter.
+ *     tags: [Users]
  *     parameters:
  *       - name: id
  *         in: query
@@ -123,10 +127,11 @@ router.get("/user/id", async (req, res) => {
 
 /**
  * @swagger
- * /user/id/{id}:
+ * /users/user/id/{id}:
  *   get:
  *     summary: Get user by ID
  *     description: Retrieves a user by ID using path parameter.
+ *     tags: [Users]
  *     parameters:
  *       - name: id
  *         in: path
@@ -157,10 +162,11 @@ router.get("/user/id/:id", async (req, res) => {
 
 /**
  * @swagger
- * /user:
+ * /users/user:
  *   put:
  *     summary: Update a user
  *     description: Updates a user's information.
+ *     tags: [Users]
  *     parameters:
  *       - name: id
  *         in: query
@@ -197,10 +203,11 @@ router.put("/user", async (req, res) => {
 
 /**
  * @swagger
- * /user:
+ * /users/user:
  *   delete:
  *     summary: Delete a user
  *     description: Deletes a user by ID.
+ *     tags: [Users]
  *     parameters:
  *       - name: id
  *         in: query
@@ -231,10 +238,11 @@ router.delete("/user", async (req, res) => {
 
 /**
  * @swagger
- * /users/{pageSize}/{pageNumber}:
+ * /users/users/{pageSize}/{pageNumber}:
  *   get:
  *     summary: Get users with pagination
  *     description: Retrieves a paginated list of users.
+ *     tags: [Users]
  *     parameters:
  *       - name: pageSize
  *         in: path
