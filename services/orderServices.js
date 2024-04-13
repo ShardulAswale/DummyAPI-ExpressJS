@@ -1,15 +1,15 @@
 const {MongoClient} = require('mongodb');
 require('dotenv').config()
 
-const url = process.env.url;
-const dbName = "User"
+const url = process.env.URL_DB2;
+const dbName = "Orders"
 const client = new MongoClient(url,{useUnifiedTopology:true})
 
 
 async function connect(){
     try{
         await client.connect();
-        console.log("Connected to the Mongo DB");
+        console.log("Connected to Orders");
         return client.db(dbName)
     }catch(err){
         throw new Error("Could not connect to Database")

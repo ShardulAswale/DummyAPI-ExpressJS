@@ -34,13 +34,13 @@ class todos {
     const result = await db.collection(collection).findOne({
       _id: new ObjectId(ID),
     });
-    console.log("result ",result);
+    // console.log("result ",result);
     return result;
   }
 
   async getTodoByID2(ID) {
     let db = await connect();
-    console.log("in function ", ID);
+    // console.log("in function ", ID);
     const result = await db.collection(collection).findOne({
       id: parseInt(ID),
     });

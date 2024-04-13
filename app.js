@@ -27,8 +27,12 @@ const swaggerOptions = {
         description: "Operations related to customers",
       },
       {
-        name: "Users",
-        description: "Operations related to users",
+        name: "Products",
+        description: "Operations related to Products",
+      },
+      {
+        name: "Orders",
+        description: "Operations related to Orders",
       },
     ],
   },
@@ -52,7 +56,8 @@ app.get('/', (req, res) => {
         <ul>
         <li><a href="/todos">Todos</a></li>
         <li><a href="/customers">Customers</a></li>
-        <li><a href="/users">Users</a></li>
+        <li><a href="/products">Products</a></li>
+        <li><a href="/orders">Orders</a></li>
         <li><a href="/api-docs">Swagger</a></li>
         </ul>
       </body>
@@ -65,10 +70,12 @@ app.get('/', (req, res) => {
 // Routes
 const todoRouter = require("./routes/todoRouter");
 const customerRouter = require("./routes/customerRouter");
-const userRouter = require("./routes/userRouter");
+const orderRouter = require("./routes/orderRouter");
+const productRouter = require("./routes/productRouter");
 app.use("/todos", todoRouter);
 app.use("/customers", customerRouter);
-app.use("/users", userRouter);
+app.use("/products", productRouter);
+app.use("/orders", orderRouter);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

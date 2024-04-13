@@ -1,62 +1,96 @@
 const express = require("express");
 const router = express.Router();
-const Users = require("../repository/users");
-const users = new Users();
+const Orders = require("../repository/orders");
+const orders = new Orders();
 
 /**
  * @swagger
  * tags:
- *   name: Users
- *   description: Operations related to users
+ *   name: Orders
+ *   description: Operations related to orders
  */
 
 /**
  * @swagger
- * /users:
+ * /orders:
  *   get:
- *     summary: User Welcome Page
- *     description: Returns a welcome message.
- *     tags: [Users]
+ *     summary: Order Welcome Page
+ *     description: Returns a welcome message for orders.
+ *     tags: [Orders]
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           text/plain:
- *             example: Welcome to users page
+ *             example: Welcome to orders page
  */
 router.get("/", (req, res) => {
-  res.send("Welcome to users page");
+  res.send("Welcome to orders page");
 });
 
 /**
  * @swagger
- * /users/user:
+ * /orders/orders:
+ *   get:
+ *     summary: Get list of orders
+ *     description: Retrieves a list of all orders.
+ *     tags: [Orders]
+ *     responses:
+ *       200:
+ *         description: Orders Found
+ *         content:
+ *           application/json:
+ *             example:
+ *               summary: List of orders
+ *               value:
+ *                 message: "List of orders"
+ *                 orders: [{"id": "1", "product": "Product 1"}, {"id": "2", "product": "Product 2"}]
+ *                 ordersLength: 10
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             example: {"error": "Internal Server Error"}
+ */
+router.get("/orders", async (req, res) => {
+  try {
+    const { Orders, ordersLength } = await orders.getAllOrders();
+    res.status(200).json({ message: "List of orders", ordersList: Orders , ordersLength: ordersLength});
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+/**
+ * @swagger
+ * /orders/order:
  *   post:
- *     summary: Add a new user
- *     description: Adds a new user to the system.
- *     tags: [Users]
+ *     summary: Add a new order
+ *     description: Adds a new order to the system.
+ *     tags: [Orders]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
- *           example: {"user": {"username": "john_doe", "email": "john.doe@example.com"}}
+ *           example: {"order": {"product": "New Product"}}
  *     responses:
  *       200:
- *         description: User Added
+ *         description: Order Added
  *         content:
  *           application/json:
- *             example: {"message": "User Added", "id": "new_user_id"}
+ *             example: {"message": "Order Added", "id": "new_order_id"}
  *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
  *             example: {"error": "Internal Server Error"}
  */
-router.post("/user", async (req, res) => {
+router.post("/order", async (req, res) => {
   try {
-    let user = req.body.user;
-    const result = await users.insertUser(user);
-    res.json({ message: "User Added", id: result.insertedId });
+    let order = req.body.order;
+    const result = await orders.insertOrder(order);
+    res.json({ message: "Order Added", id: result.insertedId });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -64,62 +98,39 @@ router.post("/user", async (req, res) => {
 
 /**
  * @swagger
- * /users/user:
+ * /orders/order/id:
  *   get:
- *     summary: Get all users
- *     description: Retrieves a list of all users.
- *     tags: [Users]
- *     responses:
- *       200:
- *         description: Users Found
- *         content:
- *           application/json:
- *             example: {"message": "User Found", "users": [{"id": "123456789", "username": "john_doe", "email": "john.doe@example.com"}]}
- *       500:
- *         description: Internal Server Error
- *         content:
- *           application/json:
- *             example: {"error": "Internal Server Error"}
- */
-router.get("/user", async (req, res) => {
-  try {
-    const result = await users.getAllUser();
-    res.json({ message: "User Found", users: result });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-/**
- * @swagger
- * /users/user/id:
- *   get:
- *     summary: Get user by ID
- *     description: Retrieves a user by ID using query parameter.
- *     tags: [Users]
+ *     summary: Get order by ID
+ *     description: Retrieves an order by ID using query parameter.
+ *     tags: [Orders]
  *     parameters:
- *       - name: id
+ *       - name: _id
  *         in: query
  *         required: true
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: User Found
+ *         description: Order Found
  *         content:
  *           application/json:
- *             example: {"message": "User Found", "users": [{"id": "123456789", "username": "john_doe", "email": "john.doe@example.com"}]}
+ *             example: {"message": "Order Found", "order": {"id": "1", "product": "Product 1"}}
  *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
  *             example: {"error": "Internal Server Error"}
  */
-router.get("/user/id", async (req, res) => {
+router.get("/order/id", async (req, res) => {
   try {
-    let id = req.query.id;
-    const result = await users.getUserByID1(id);
-    res.json({ message: "User Found", users: result });
+    let id = req.query._id;
+    const result = await orders.getOrderByID1(id);
+
+    if (result !== null) {
+      res.json({ message: "Order Found", order: result });
+    } else {
+      res.json({ message: "Order not Found" });
+    }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -127,11 +138,11 @@ router.get("/user/id", async (req, res) => {
 
 /**
  * @swagger
- * /users/user/id/{id}:
+ * /orders/order/id/{id}:
  *   get:
- *     summary: Get user by ID
- *     description: Retrieves a user by ID using path parameter.
- *     tags: [Users]
+ *     summary: Get order by ID
+ *     description: Retrieves an order by ID using path parameter.
+ *     tags: [Orders]
  *     parameters:
  *       - name: id
  *         in: path
@@ -140,21 +151,21 @@ router.get("/user/id", async (req, res) => {
  *           type: string
  *     responses:
  *       200:
- *         description: User Found
+ *         description: Order Found
  *         content:
  *           application/json:
- *             example: {"message": "User Found", "users": [{"id": "123456789", "username": "john_doe", "email": "john.doe@example.com"}]}
+ *             example: {"message": "Order Found", "order": {"id": "1", "product": "Product 1"}}
  *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
  *             example: {"error": "Internal Server Error"}
  */
-router.get("/user/id/:id", async (req, res) => {
+router.get("/order/id/:id", async (req, res) => {
   try {
     let id = req.params.id;
-    const result = await users.getUserByID2(id);
-    res.json({ message: "User Found", users: result });
+    const result = await orders.getOrderByID2(id);
+    res.json({ message: "Order Found", order: result });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -162,11 +173,11 @@ router.get("/user/id/:id", async (req, res) => {
 
 /**
  * @swagger
- * /users/user:
+ * /orders/order:
  *   put:
- *     summary: Update a user
- *     description: Updates a user's information.
- *     tags: [Users]
+ *     summary: Update an order
+ *     description: Updates an order's information.
+ *     tags: [Orders]
  *     parameters:
  *       - name: id
  *         in: query
@@ -177,25 +188,25 @@ router.get("/user/id/:id", async (req, res) => {
  *       required: true
  *       content:
  *         application/json:
- *           example: {"user": {"username": "john_doe_updated", "email": "john.doe@example.com"}}
+ *           example: {"order": {"product": "Updated Product"}}
  *     responses:
  *       200:
- *         description: User Updated
+ *         description: Order Updated
  *         content:
  *           application/json:
- *             example: {"message": "User Updated"}
+ *             example: {"message": "Order Updated"}
  *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
  *             example: {"error": "Internal Server Error"}
  */
-router.put("/user", async (req, res) => {
+router.put("/order", async (req, res) => {
   try {
     let id = req.query.id;
-    let user = req.body.user;
-    const result = await users.updateUser(id, user);
-    res.json({ message: "User Updated" });
+    let order = req.body.order;
+    const result = await orders.updateOrder(id, order);
+    res.json({ message: "Order Updated" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -203,11 +214,11 @@ router.put("/user", async (req, res) => {
 
 /**
  * @swagger
- * /users/user:
+ * /orders/order:
  *   delete:
- *     summary: Delete a user
- *     description: Deletes a user by ID.
- *     tags: [Users]
+ *     summary: Delete an order
+ *     description: Deletes an order by ID.
+ *     tags: [Orders]
  *     parameters:
  *       - name: id
  *         in: query
@@ -216,21 +227,21 @@ router.put("/user", async (req, res) => {
  *           type: string
  *     responses:
  *       200:
- *         description: User Deleted
+ *         description: Order Deleted
  *         content:
  *           application/json:
- *             example: {"message": "User Deleted"}
+ *             example: {"message": "Order Deleted"}
  *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
  *             example: {"error": "Internal Server Error"}
  */
-router.delete("/user", async (req, res) => {
+router.delete("/order", async (req, res) => {
   try {
     let id = req.query.id;
-    const result = await users.deleteUser(id);
-    res.json({ message: "User was deleted" });
+    const result = await orders.deleteOrder(id);
+    res.json({ message: "Order Deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -238,11 +249,11 @@ router.delete("/user", async (req, res) => {
 
 /**
  * @swagger
- * /users/users/{pageSize}/{pageNumber}:
+ * /orders/orders/{pageSize}/{pageNumber}:
  *   get:
- *     summary: Get users with pagination
- *     description: Retrieves a paginated list of users.
- *     tags: [Users]
+ *     summary: Get orders with pagination
+ *     description: Retrieves a paginated list of orders.
+ *     tags: [Orders]
  *     parameters:
  *       - name: pageSize
  *         in: path
@@ -256,25 +267,25 @@ router.delete("/user", async (req, res) => {
  *           type: integer
  *     responses:
  *       200:
- *         description: Users page
+ *         description: Orders page
  *         content:
  *           application/json:
- *             example: {"message": "Users page", "pagination": {"totalUsers": 10, "totalPages": 2, "currentPage": 1, "pageSize": 5, "nextPage": 2, "prevPage": null}, "users": [{"id": "123456789", "username": "john_doe", "email": "john.doe@example.com"}]}
+ *             example: {"message": "Orders page", "pagination": {"totalOrders": 10, "totalPages": 2, "currentPage": 1, "pageSize": 5, "nextPage": 2, "prevPage": null}, "orders": [{"id": "1", "product": "Product 1"}, {"id": "2", "product": "Product 2"}]}
  *       500:
  *         description: Internal Server Error
  *         content:
  *           application/json:
  *             example: {"error": "Internal Server Error"}
  */
-router.get("/users/:pageSize/:pageNumber", async (req, res) => {
+router.get("/orders/:pageSize/:pageNumber", async (req, res) => {
   try {
     let pageSize = parseInt(req.params.pageSize);
     let pageNumber = parseInt(req.params.pageNumber);
-    const result = await users.getUsersWithPagination(pageSize, pageNumber);
+    const result = await orders.getOrdersWithPagination(pageSize, pageNumber);
     const response = {
-      message: `Users page ${pageNumber} of size ${pageSize}`,
+      message: `Orders page ${pageNumber} of size ${pageSize}`,
       pagination: {
-        totalUsers: result.totalUsers,
+        totalOrders: result.totalOrders,
         totalPages: result.totalPages,
         currentPage: result.currentPage,
         pageSize: result.pageSize,
@@ -284,7 +295,7 @@ router.get("/users/:pageSize/:pageNumber", async (req, res) => {
             : null,
         prevPage: result.currentPage > 1 ? result.currentPage - 1 : null,
       },
-      users: result.users,
+      orders: result.orders,
     };
     res.status(200).json(response);
   } catch (err) {
