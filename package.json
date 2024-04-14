@@ -1,5 +1,5 @@
 {
-  "name": "todo",
+  "name": "dummy-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -14,7 +14,8 @@
     "express": "^4.19.2",
     "mongodb": "^6.5.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "nodemon": "^3.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.12.7"
