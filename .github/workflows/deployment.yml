@@ -16,10 +16,12 @@ jobs:
       - name: Install Node.js and npm
         uses: actions/setup-node@v2
         with:
-          node-version: '15.x'
+          node-version: '14'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Start Express App
-        run: node app.js
+      - name: Start Express App with MongoDB Connection String
+        run: |
+          export MONGODB_URI="${{ secrets.MONGODB_URI }}"
+          node app.js
