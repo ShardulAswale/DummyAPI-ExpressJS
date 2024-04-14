@@ -24,4 +24,5 @@ jobs:
       - name: Start Express App with MongoDB Connection String
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        run: node app.js
+        run: |
+          npm start

@@ -1,10 +1,20 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const app = express();
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 const port = process.env.PORT || 5000;
-;
+
+// Connect to MongoDB
+const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/your_database";
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((error) => {
+    console.error("Error connecting to MongoDB:", error);
+  });
 
 // Extended: https://swagger.io/specification/#infoObject
 const swaggerOptions = {
@@ -16,8 +26,9 @@ const swaggerOptions = {
       contact: {
         name: "Amazing Developer",
       },
-      servers: ["http://localhost:5000"],
-    },tags: [
+      servers: [`http://localhost:${port}`],
+    },
+    tags: [
       {
         name: "Todos",
         description: "Operations related to todos",
@@ -43,7 +54,7 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-//Home page 
+// Home page 
 app.get('/', (req, res) => {
   const responseText = `
     <html>
@@ -65,7 +76,7 @@ app.get('/', (req, res) => {
   `;
   
   res.send(responseText);
-})
+});
 
 // Routes
 const todoRouter = require("./routes/todoRouter");
