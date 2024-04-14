@@ -1,7 +1,7 @@
 const {MongoClient} = require('mongodb');
 require('dotenv').config()
 
-const url = process.env.URL_DB2;
+const url = process.env.MONGODB_URI;
 const dbName = "Products"
 const client = new MongoClient(url,{useUnifiedTopology:true})
 
