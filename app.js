@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const app = express();
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const path = require("path");
 
 const port = process.env.PORT || 5000;
 
@@ -15,6 +16,9 @@ mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .catch((error) => {
     console.error("Error connecting to MongoDB:", error);
   });
+
+// Serve static files
+app.use(express.static(path.join(__dirname, "public")));
 
 // Extended: https://swagger.io/specification/#infoObject
 const swaggerOptions = {
@@ -54,28 +58,9 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// Home page 
+// Home page
 app.get('/', (req, res) => {
-  const responseText = `
-    <html>
-      <head>
-        <title>Welcome to Home Page</title>
-      </head>
-      <body>
-        <h1>Welcome to Home Page</h1>
-        <p>Click the following links:</p><br>
-        <ul>
-        <li><a href="/todos">Todos</a></li>
-        <li><a href="/customers">Customers</a></li>
-        <li><a href="/products">Products</a></li>
-        <li><a href="/orders">Orders</a></li>
-        <li><a href="/api-docs">Swagger</a></li>
-        </ul>
-      </body>
-    </html>
-  `;
-  
-  res.send(responseText);
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // Routes
